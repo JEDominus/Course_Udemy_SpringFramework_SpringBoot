@@ -22,3 +22,5 @@ Para fines de este ejercicio, hemos agregado las siguientes dependencias:
 - Dentro de "resources" podremos ver la carpeta de "templates" que aloja las plantillas de Thymeleaf qure utilizaremos para nuestra pagina Web
 - El archivo "application.properties" contiene las configuraciones de nuestra aplicacion Spring
 - Finalmente, contiene la clase principal de nuestra aplicacion mediante la cual podremos ejecutar la misma; "HolaSpringApplication.java"
+
+![img_2.png](img_2.png)
