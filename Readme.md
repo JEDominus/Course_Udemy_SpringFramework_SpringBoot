@@ -19,10 +19,10 @@
 - A su vez, esta clase esta anotada con `@SpringbootApplication`
 - Al entrar a esa anotacion, podemos ver como hay otras anotaciones mas que son las que facilitan la configuracion del proyecto
 - Para ejecutar la aplicacion basta con entrar a la clase y darle en correr el archivo actual
-![img.png](src/main/resources/Pictures/img.png)
+![img.png](Hola-Spring/src/main/resources/Pictures/img.png)
 - Ahora podremos acceder a nuestra aplicacion usando el la direccion local y el puerto
 - Veremos una pantalla de error dado que no hemos definido alguna pantalla de error especifica, pero con eso se comprueba que la app esta corriendo
-![img.png](src/main/resources/Pictures/img1.png)
+![img.png](Hola-Spring/src/main/resources/Pictures/img1.png)
 
 
 ### Spring
@@ -39,9 +39,9 @@
 - Nuestra clase controlador `HomeController.java` debe estar anotada con `@RestController` para que Spring pueda reconocerla
 - @RestController tiene dentro `@Controller`, que a su vez tiene `@Component`. Esto le permite al `@ComponentScan` detectar la clase como clase del contenedor
 - Hemos anotado con `@GetMapping` el metodo del controlador agregando la ruta `/` para que sea el metodo que se ejecute al correr la aplicacion, que en este caso, solo retorna un string!
-![img.png](src/main/resources/Pictures/img2.png) 
+![img.png](Hola-Spring/src/main/resources/Pictures/img2.png) 
 - La anotacion `@Slf4J` viene de parte de lombok y es para agregar logging a nuestras clases
-![img.png](src/main/resources/Pictures/img3.png)
+![img.png](Hola-Spring/src/main/resources/Pictures/img3.png)
 
 ### Archivo de configuracion de la aplicacion
 - Dentro de `Hola-Spring\src\main\resources` se encuentra el archivo `application.properties`
@@ -50,7 +50,7 @@
 - Hemos cambiado el puerto de la aplicacion a `9090`
 - Tambien el nivel de loggeo de la aplicacion en general, aunque tambien se puede hacer a nivel de paquete usando `logging.level.[Paquete]`
 - Ahora podemos acceder al nivel debug dentro de nuestro controlador:
-![img_1.png](src/main/resources/Pictures/img5.png)
-![img.png](src/main/resources/Pictures/img4.png)
+![img_1.png](Hola-Spring/src/main/resources/Pictures/img5.png)
+![img.png](Hola-Spring/src/main/resources/Pictures/img4.png)
 - Por ultimo, hemos configurado el patron de fecha del log para que solo mande la hora y el minuto en lugar de toda la fecha, esto con `logging.pattern.dateformat=hh:mm`
-![img.png](src/main/resources/Pictures/img6.png)
+![img.png](Hola-Spring/src/main/resources/Pictures/img6.png)
