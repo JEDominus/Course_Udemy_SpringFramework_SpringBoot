@@ -1,5 +1,6 @@
 package com.courses.je.controller;
 
+import com.courses.je.domain.Persona;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -17,9 +18,13 @@ public class HomeController {
     public String home(Model model) {
         log.info("Ejecutando el controlador Spring MVC");
 
-        String mensaje = "Hola Mundo con desde Spring MVC";
-        model.addAttribute("mensaje", mensaje);
-        model.addAttribute("mensajeProperties", saludoProperties);
+        Persona persona = Persona.builder()
+                .firstName("Javier")
+                .lastName("Mota")
+                .email("je.dominus.anger@gmail.com")
+                .phone("3320801954").build();
+
+        model.addAttribute("persona", persona);
 
         return "index";
     }
