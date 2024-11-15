@@ -1,25 +1,24 @@
 # Seccion 3
-## Clase de dominio "Persona"
+## Iterar listas en Thymeleaf
 
-### Clases de dominio
-- Estas clases son las que se comparten entre BE y FE en los endpoints y tienen su propio paquete
-- Se ha creado una clase Persona que contendra 4 atributos, nombre, apellido, telefono y email
-
-### Lombok
-- Tradicionalmente se le agregaban los metodos set y get a cada atributo de la clae de dominio manualmente
-- Con la libreria de `lombok` podemos agregar anotaciones que nos permite generar ese codigo sin evrlo en la clase
-- `@Data`: contiene varios de las anotacion de lombok como `toString`, `hasCode`, `equals`, `@Getters` y `@Setters`
-- `@AllArgsConstructor`: Permite el llamado de un constructor con todas las propiedades como parametro
-- `@NoArgsConstructor`: Permite el llamado de un constructor sin parametros
-- `@Builder`: Permite el instanciamiento de la clase con el patron builder
-- `@Accessors(chain = true)`: permite acceder a los atributos en cadena con la notacion del punto
+### Creacion de una lista de personas
+- Para esto se requiere la creacion de mas objetos de tipo persona ya gregarlos en un `ArrayList`
+- Se ha creado un servicio que se encargue de crear personas y regrese la lista de las personas
+- Este service debe ser anotado con `@Service` para que el `ComponentScan` del contenedor lo agregue al contexto
+- Ahora solo debemos agregar esta lista al modelo
 
 ### Vista
-- De igual manera que los atributos anteriores, se puede agregar el objeto persona al objeto `Model`
-- Ahora la plantilla thymeleaf puede accedr al objeto y sus atributos con la notacion del punto: `th:text="${persona.firstName}"`
-- Una vez hecho esto, ya podemos observar los atributos del objeto en la vista
+- Del lado de Thymeleaf, utilizaremos `th:each="persona : ${personas}` para iterar los objetos de la lista
+- donde `persona` es el elemento actual iterado y `${personas}` el objeto que agregamos en el controlador
+- Una vez iterada la lista, podemos observar los valores en la vista
 
 ![img.png](img.png)
 
-### Arquitectura Spring MVC
+### Validacion Thymeleaf
+- Se agrego la validacion de la lista de personas para que muestre la tabla solamente si no es nula y contiene elementos
+- Para esto utilizamos `th:if="${...condicion...}"`
+- Un div para mostrar la tabla si la listano es nula ni esta vacia y otro que muestre un mensaje si la lista es nula o vacio
+- Se ha nulificado la lista y podemos ver el mensaje en la pagina correctamente
+
 ![img_1.png](img_1.png)
+

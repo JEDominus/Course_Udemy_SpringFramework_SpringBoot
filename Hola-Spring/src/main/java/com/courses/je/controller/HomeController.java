@@ -1,32 +1,34 @@
 package com.courses.je.controller;
 
 import com.courses.je.domain.Persona;
+import com.courses.je.service.PersonaService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @Slf4j
 @Controller
+@RequiredArgsConstructor
 public class HomeController {
 
     @Value("${index.saludo}")
     private String saludoProperties;
 
+    private final PersonaService personaService;
+
     @GetMapping("/")
     public String home(Model model) {
-        log.info("Ejecutando el controlador Spring MVC");
-
-        Persona persona = Persona.builder()
-                .firstName("Javier")
-                .lastName("Mota")
-                .email("je.dominus.anger@gmail.com")
-                .phone("3320801954").build();
-
-        model.addAttribute("persona", persona);
-
+        List<Persona> personas = personaService.getPersonas(12);
+        model.addAttribute("personas", personas);
         return "index";
     }
+
+
 
 }

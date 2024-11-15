@@ -5,9 +5,24 @@
     <title>Home</title>
 </head>
 <body>
-    <p th:text="${persona.firstName}"></p>
-    <p th:text="${persona.lastName}"></p>
-    <p th:text="${persona.phone}"></p>
-    <p th:text="${persona.email}"></p>
+<div th:if="${personas != null and !personas.empty}">
+    <table border="1">
+        <tr>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Telefono</th>
+            <th>Email</th>
+        </tr>
+        <tr th:each="persona : ${personas}">
+            <td th:text="${persona.firstName}">Mostrar Nombre</td>
+            <td th:text="${persona.lastName}">Mostrar Apellido</td>
+            <td th:text="${persona.phone}">Mostrar Telefono</td>
+            <td th:text="${persona.email}">Mostrar Email</td>
+        </tr>
+    </table>
+</div>
+<div th:if="${personas == null or personas.empty}">
+    <h1>No se han encontrado personas</h1>
+</div>
 </body>
 </html>
