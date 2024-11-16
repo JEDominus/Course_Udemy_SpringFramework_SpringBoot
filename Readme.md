@@ -1,4 +1,4 @@
-# Seccion 3
+# Seccion 4
 ## Spring Data
 
 ### Introduccion
@@ -27,7 +27,7 @@
 
 - Para solucionar esto, hay que ir a `application.properties` y configurar lo sighuiente:
 
-![img_4.png](img_4.png)
+![img_6.png](img_6.png)
 
 - Con esto configurado, ya podremos inicializar nuestra aplicacion
 
