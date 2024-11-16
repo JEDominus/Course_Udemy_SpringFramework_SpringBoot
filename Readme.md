@@ -1,4 +1,4 @@
-# Universidad Spring
+# Seccion 4
 ## Instalacion de MySQL
 
 ### MySQL Download
