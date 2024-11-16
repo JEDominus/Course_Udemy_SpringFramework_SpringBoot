@@ -19,7 +19,7 @@ public class HomeController {
 
     @GetMapping("/")
     public String home(Model model) {
-        Iterable<Persona> personas = personaService.getPersonas();
+        List<Persona> personas = personaService.listarPersonas();
         model.addAttribute("personas", personas);
         return "index";
     }

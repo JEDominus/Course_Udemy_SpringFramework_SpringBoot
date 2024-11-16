@@ -1,17 +1,16 @@
 package com.courses.je.service;
 
 import com.courses.je.model.entity.Persona;
-import com.courses.je.repository.PersonaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-@Service
-public class PersonaService {
+import java.util.List;
 
-    @Autowired
-    private PersonaRepository personaRepository;
+public interface PersonaService {
 
-    public Iterable<Persona> getPersonas() {
-        return personaRepository.findAll();
-    }
+    List<Persona> listarPersonas();
+
+    Persona encontrarPersona(Persona persona);
+
+    void guardarPersona(Persona persona);
+
+    void eliminarPersona(Persona persona);
 }
