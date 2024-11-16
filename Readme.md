@@ -1,39 +1,67 @@
-# Seccion 5
-## Manejo Transaccional
+# Seccion 6
+## CRUD Agregar
 
-### Capa de Servicio
-- Crearemos una capa de servicio entre la capa de datos y la capa de presentacion
-- Para ello crearemos una interfaz y una implementacion para `Persona`
-- En nuestra interfaz `PersonaService` agregaremos los metodos que queramos implementar mas delante
-- De momento vamos a agregar los siguientes:
-- `listarPersonas`, que devuelve una lista de personas
-- `guardarPersona`, que recibe un objetod e tipo persona y lo guarda en la abse de datos
-- `eliminarPersona`, que recibe la persona a eliminar
-- `encontrarPersona`, que sirve para encontrar una persona en especifico
-- Ahora se requiere de la implementaciond e esta interfaz en nuestra clase de servicio `PersonaServiceImpl`
-
-### Implementacion
-- Ahora basta con llamar desde nuestra capa de servicio `PersonaServiceImpl` a nuestro repositorio con los metodo rpedefinidos por jpa
-- En el caso de `findAll`, hay que castear el return a un tipo `List...` ya que originalmente retorna un `Iterable...`
-- En el caso de `findById`, dado que retorna un `optional` hay agregar alguna otra accion por si no lo encuentra, en este caso `null`
-- Para `save` y `delete` se puede hacer la llamada directa sin ningun problema
-
-### Transacciones - Spring Transactional
-- Cuando estamos en la capa de datos, se maneja el concepto de `Transacciones`
-- Cualquier operacion que se haga en la base de datos:
-  - En caso de fallar, se ejecuta un `rollback`
-  - En caso de ser exitoso, se hace un `commit`
-- Dado que un mismo servicio puede manejar varias llamadas a varias clases DAO, es necesario anotar los metodos como `@Transactional`
-- Existen diferentes tipos de transaccion segun la operacion que estamos realizando
-
-### Tipos de Transacciones
-- `@Transactional(readOnly = true)` para `findAll` y `findById` ya que solo leen de la base de datos
-- `@Transactional` para `save` y `delete` dado que modificara la base de datos y es necesario hacer `commit` o `rollback`
-
-### Controlador
-- En el controlador se injecta la capa de servicio con el nombre de la interfaz `PersonaService` y no el de la implementacion `PersonaServiceImpl`
-- **Spring en el controlador va a buscar el tipo del servicio (que es la interface `PersonaService`) y por otro una instancia de la implementacion de esa interface que sea marcado con la anotacion `@Service` (`PersonaServiceImpl`)**
-- Esto permite cambiar la implementacion sin cambiar el codigo del controlador dado que esta apuntando a la interface y no a la implementacion directamente
-- En la siguiente leccion,s e implementara el resto de operacion, aunque de momento, ya podemos ver la lista de personas en la base de datos 
+### Vista (index.html)
+- Comenzamos por agregar `<a th:href="@{/agregar}">Agregar Persona</a>`
+  - `<a...>Agregar Persona</a>` es la etiqueta utilizada para links
+  - `th:href=""` el componente de thymeleaf para la referencia del link
+  - `@{/agrega}` el path del controlador que maneja esa operacion
+- Podemos observar que ya se encuentra la opcion en nuestra pagina
 
 ![img.png](img.png)
+
+### Controlador - /agregar
+- Se debe agregar el path de `/agregar` al controlador de tipo GET
+- Podemos crear la persona en el metodo o tambien pedirle a spring que lo genere
+- Para generarlo, solo agregamos un nuevo argumento de tipo `Persona` en el metodo de agregar
+- Al generar este objeto con `spring factory`, ya esta al alcance del objeto `request`
+- Este metodo solo retorna la vista `modificar (modificar.html)` ya que realizara ambas operaciones
+
+### modificar.html
+- Configuramos este nuevo template con el namespace de thymeleaf y agregamos los elementos html que queramos en la pagina
+- Comenzando por un link que nos permita regresar a la pagina de inicio: `<a th:href="@{/}">Inicio</a>`
+- Comprobamos que funcione presionando los links en ambas pagina
+
+![img_1.png](img_1.png)
+
+![img_2.png](img_2.png)
+
+- Ahora agregamos el formulario
+
+### Formulario (modificar.html)
+- Utilizando `th:action="@{/guardar}" method="POST"` definimos el tipo de operacion y el endpoint al que va a llamar
+- El endpoint `/agregar` esta asociado con un objeto de tipo `Persona`. Entonces basta con utilziar `th:object="${persona}"` para referenciar al objeto persona al que esta asociado el endpoint
+- Agregamos los inputs para cada campo
+  - Utilizamos `th:field="*{nombre}"` para asociar cada campo con la propiedad del objeto persona
+- Ahora si inspeccionamos el input en el navegador, podemos observar que la etiqueta ha asociado el nombre con el campo `persona.nombre`. Lo podemos ver mediante el campo `id="nombre"`
+
+![img_3.png](img_3.png)
+
+- Esta asociacion se encarga de hacerla thymelead y spring. El atributo `id` hace referencia a la propiedad del objeto asociado, `persona`" en este caso
+- Finalmente hemos agregado el resto de campos y comprobamos que se hayan referenciado correctamente con cada campo del tipo `Person`a mediante el atributo `id`
+
+![img_4.png](img_4.png)
+
+### Controlador - /guardar
+- Ahora solo falta agregar el endpoint `/guardar` para que el formulario funcione dado que esta referenciado en la vista mas no se ha creado en el controlador
+- en esta ocasion, el formulario es de tipo `post` por lo que utilizaremos `@PostMapping`
+- Agregamos como argumento nuestro objeto de tipo `Persona` que ya contiene toda la informacion que hemos agregado
+- Despues llamamos a nuestro servicio para que ejecute el `save`
+- Por ultimo, retornamos un `redirect:/` para redireccionar a la pagina de inicio
+- Con esto hemos completado el fluejo para agregar personas:
+
+![img_5.png](img_5.png)
+
+- Este registro se agrega a la base de datos, misma de donde se lee para la tabla
+
+![img_7.png](img_7.png)
+
+![img_6.png](img_6.png)
+
+
+### Extras
+- El Id autogenerado de la tabla `Persona` puede saltarse i.e 1 -> 5 si hubo 3 registros intermedios que se eleiminaron
+- Con `ALTER TABLE persona AUTO_INCREMENT = 1`, seteamos el valor inicial del id siguiente registro en 1
+  - Si este ya se encuentra ocupado, seguira buscando hasta encontrar el siguiente numero disponible
+  - Por lo que nuestro registro numero 6, ahora tendra el id 2 
+
