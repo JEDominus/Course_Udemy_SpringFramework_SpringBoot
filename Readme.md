@@ -1,4 +1,4 @@
-# Universidad Spring
+# Seccion 4
 ## Conexion BD con IDE
 
 ### IntelliJ IDEA Ultimate
