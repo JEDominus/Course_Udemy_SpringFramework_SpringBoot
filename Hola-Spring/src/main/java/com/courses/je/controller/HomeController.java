@@ -4,6 +4,7 @@ import com.courses.je.domain.Persona;
 import com.courses.je.service.PersonaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,9 +18,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class HomeController {
 
-    @Value("${index.saludo}")
-    private String saludoProperties;
-
     private final PersonaService personaService;
 
     @GetMapping("/")
@@ -28,7 +26,5 @@ public class HomeController {
         model.addAttribute("personas", personas);
         return "index";
     }
-
-
 
 }
