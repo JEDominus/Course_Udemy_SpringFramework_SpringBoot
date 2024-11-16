@@ -5,6 +5,19 @@
     <title>Home</title>
 </head>
 <body>
-
+    <table border="1">
+        <tr>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Telefono</th>
+            <th>Email</th>
+        </tr>
+        <tr th:each="persona : ${personas}">
+            <td th:text="${persona.nombre}">Mostrar Nombre</td>
+            <td th:text="${persona.apellido}">Mostrar Apellido</td>
+            <td th:text="${persona.telefono}">Mostrar Telefono</td>
+            <td th:text="${persona.email}">Mostrar Email</td>
+        </tr>
+    </table>
 </body>
 </html>
