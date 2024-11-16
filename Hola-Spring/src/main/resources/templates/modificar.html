@@ -9,6 +9,7 @@
     <a th:href="@{/}">Regresar</a>
     <br><br><br>
     <form th:action="@{/guardar}" method="POST" th:object="${persona}">
+        <input type="hidden" name="personaId" th:field="*{personaId}" /> <br>
         <label for="nombre">Nombre:</label>
         <input type="text" name="nombre" th:field="*{nombre}" /> <br>
         <label for="apellido">Apellido: </label>

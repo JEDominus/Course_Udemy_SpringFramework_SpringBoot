@@ -35,4 +35,11 @@ public class HomeController {
         personaService.guardarPersona(persona);
         return "redirect:/";
     }
+
+    @GetMapping("/editar/{personaId}")
+    public String editar(Persona persona, Model model) {
+        persona = personaService.encontrarPersona(persona);
+        model.addAttribute("persona", persona);
+        return "modificar";
+    }
 }

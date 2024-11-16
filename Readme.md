@@ -1,67 +1,52 @@
 # Seccion 6
-## CRUD Agregar
+## CRUD Editar
 
-### Vista (index.html)
-- Comenzamos por agregar `<a th:href="@{/agregar}">Agregar Persona</a>`
-  - `<a...>Agregar Persona</a>` es la etiqueta utilizada para links
-  - `th:href=""` el componente de thymeleaf para la referencia del link
-  - `@{/agrega}` el path del controlador que maneja esa operacion
-- Podemos observar que ya se encuentra la opcion en nuestra pagina
+### Vista - index.html
+- Comenzamos por agregar una nueva columna en la tabla para pdoer editar un registro
+- `<a th:href="@{/editar/} + ${persona.persona_id}">Editar</a>`
+  - `@{/editar/}` es el path de nuestro controlador
+  - `+ ${persona.persona_id}` es el `pathVariable` que señala que `Persona` vamos a edita
+- Por lo tanto al controlador le debe llegar por ejemplo un `/edita/1`
+- Podemos observar que el nuevo campo editar ya se encuentra en la tabla
 
 ![img.png](img.png)
 
-### Controlador - /agregar
-- Se debe agregar el path de `/agregar` al controlador de tipo GET
-- Podemos crear la persona en el metodo o tambien pedirle a spring que lo genere
-- Para generarlo, solo agregamos un nuevo argumento de tipo `Persona` en el metodo de agregar
-- Al generar este objeto con `spring factory`, ya esta al alcance del objeto `request`
-- Este metodo solo retorna la vista `modificar (modificar.html)` ya que realizara ambas operaciones
+### Controlador - /editar/{personaId}
+- Se agrega un `@GetMapping` con el path `editar/{personaId}`
+- Se agrega como argumento el objeto `Persona`
+- Spring asocia el objeto inyectado persona con el `pathVariable` `personaId` y crea una instancia del objeto con ese id, por lo que no hay que setearlo de nuevo
+- Ahora podemos usar el objeto `Persona` con el `personaId` que se le ha pasado
+- Tambien necesitamos agregar `Model` para compartir los cambios con la siguiente peticion
+- Vamos al servicio a buscar el objeto persona con el Id que nos han pasado
+- Lo agregamos al modelo y retornamos la vista `modificar`
 
-### modificar.html
-- Configuramos este nuevo template con el namespace de thymeleaf y agregamos los elementos html que queramos en la pagina
-- Comenzando por un link que nos permita regresar a la pagina de inicio: `<a th:href="@{/}">Inicio</a>`
-- Comprobamos que funcione presionando los links en ambas pagina
+### Vista - modificar
+- **A la hora de que la vista toma el objeto compartido en el modelo, el formulario lee los campos del objeto que se ha retornado (`persona`) y llena cada uno de los campos del formulario con sus valores actuales**
+- Por lop que ya no es necesario hacer ningun cambio para agregar los valores actuales del objeto recuperado al formulario
+- Al acceder a editar un registro, podemos ver que el endpoint ya contiene el id de la persona `5`
+- Tambien que los campos estan llenos con la informacion actual
 
 ![img_1.png](img_1.png)
 
+- Ahora modificaremos la informacion de la persona
+
 ![img_2.png](img_2.png)
 
-- Ahora agregamos el formulario
-
-### Formulario (modificar.html)
-- Utilizando `th:action="@{/guardar}" method="POST"` definimos el tipo de operacion y el endpoint al que va a llamar
-- El endpoint `/agregar` esta asociado con un objeto de tipo `Persona`. Entonces basta con utilziar `th:object="${persona}"` para referenciar al objeto persona al que esta asociado el endpoint
-- Agregamos los inputs para cada campo
-  - Utilizamos `th:field="*{nombre}"` para asociar cada campo con la propiedad del objeto persona
-- Ahora si inspeccionamos el input en el navegador, podemos observar que la etiqueta ha asociado el nombre con el campo `persona.nombre`. Lo podemos ver mediante el campo `id="nombre"`
+- Observamos los cambios deplegados en la pagina de inicio
+- Sin embargo, de momento no esta modificando la informacion de la persona actual, si no que esta creando un registro completamente nuevo
+- Se puede observar que el registro a modificar, sigue en la lista, y los valores modificados se insertaron como registro nuevo
 
 ![img_3.png](img_3.png)
 
-- Esta asociacion se encarga de hacerla thymelead y spring. El atributo `id` hace referencia a la propiedad del objeto asociado, `persona`" en este caso
-- Finalmente hemos agregado el resto de campos y comprobamos que se hayan referenciado correctamente con cada campo del tipo `Person`a mediante el atributo `id`
-
-![img_4.png](img_4.png)
-
-### Controlador - /guardar
-- Ahora solo falta agregar el endpoint `/guardar` para que el formulario funcione dado que esta referenciado en la vista mas no se ha creado en el controlador
-- en esta ocasion, el formulario es de tipo `post` por lo que utilizaremos `@PostMapping`
-- Agregamos como argumento nuestro objeto de tipo `Persona` que ya contiene toda la informacion que hemos agregado
-- Despues llamamos a nuestro servicio para que ejecute el `save`
-- Por ultimo, retornamos un `redirect:/` para redireccionar a la pagina de inicio
-- Con esto hemos completado el fluejo para agregar personas:
+- Esto se debe a que nuestro formulario no se ha especificado el valor del atributo `personaId`
+- Por lo que al presionar el boton, se ejecuta el `POST /guardar` y al no detectar el Id, hibernate lo toma como un objeto nuevo
+- Para solucionar esto hay que agregar un campo oculto que lea el Id si es que existe:
+  - `<input type="hidden" name="personaId" th:field="*{personaId}" /> <br>`
+  - Esto permite que cuando sea un registro nuevo, al no haber Id, se crea el registro
+  - Al igual que se cargan los inputs si existe la informacion, el Id se cargara en el campo oculto y en lugar de crear, modificara el registro existente
+- Ahora ya es posible modificar la informacion de `Javier Mota` sin que se guarde un registro nuevo
+- Confirmamos en la consola que la operacion realizada sea un update
 
 ![img_5.png](img_5.png)
 
-- Este registro se agrega a la base de datos, misma de donde se lee para la tabla
-
-![img_7.png](img_7.png)
-
-![img_6.png](img_6.png)
-
-
-### Extras
-- El Id autogenerado de la tabla `Persona` puede saltarse i.e 1 -> 5 si hubo 3 registros intermedios que se eleiminaron
-- Con `ALTER TABLE persona AUTO_INCREMENT = 1`, seteamos el valor inicial del id siguiente registro en 1
-  - Si este ya se encuentra ocupado, seguira buscando hasta encontrar el siguiente numero disponible
-  - Por lo que nuestro registro numero 6, ahora tendra el id 2 
-
+![img_4.png](img_4.png)
