@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -41,5 +42,11 @@ public class HomeController {
         persona = personaService.encontrarPersona(persona);
         model.addAttribute("persona", persona);
         return "modificar";
+    }
+
+    @GetMapping("/eliminar/{personaId}")
+    public String eliminar(Persona persona) {
+        personaService.eliminarPersona(persona);
+        return "redirect:/";
     }
 }
