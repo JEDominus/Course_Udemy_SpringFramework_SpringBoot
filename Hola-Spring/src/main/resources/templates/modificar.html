@@ -11,13 +11,16 @@
     <form th:action="@{/guardar}" method="POST" th:object="${persona}">
         <input type="hidden" name="personaId" th:field="*{personaId}" /> <br>
         <label for="nombre">Nombre:</label>
-        <input type="text" name="nombre" th:field="*{nombre}" /> <br>
+        <input type="text" name="nombre" th:field="*{nombre}" />*
+        <span th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}">Campo requerido</span><br>
         <label for="apellido">Apellido: </label>
-        <input type="text" name="apellido" th:field="*{apellido}" /> <br>
+        <input type="text" name="apellido" th:field="*{apellido}" />*
+        <span th:if="${#fields.hasErrors('apellido')}" th:errors="*{apellido}">Campo requerido</span><br>
         <label for="email">Email: </label>
-        <input type="email" name="email" th:field="*{email}" /> <br>
+        <input type="text" name="email" th:field="*{email}" />*
+        <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Campo requerido</span><br>
         <label for="telefono">Telefono: </label>
-        <input type="tel" name="telefono" th:field="*{telefono}" /> <br>
+        <input type="tel" name="telefono" th:field="*{telefono}" />
         <button type="submit" name="guardar">Guardar</button>
     </form>
 </body>

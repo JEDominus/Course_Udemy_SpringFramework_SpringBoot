@@ -2,10 +2,12 @@ package com.courses.je.controller;
 
 import com.courses.je.model.entity.Persona;
 import com.courses.je.service.PersonaService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,7 +34,11 @@ public class HomeController {
     }
 
     @PostMapping("/guardar")
-    public String guardar(Persona persona) {
+    public String guardar(@Valid Persona persona, Errors errors) {
+        if (errors.hasErrors()) {
+            return "modificar";
+        }
+
         personaService.guardarPersona(persona);
         return "redirect:/";
     }

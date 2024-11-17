@@ -1,54 +1,40 @@
-# Seccion 6
-## CRUD Eliminar
+# Seccion 7
+## Validacion con Spring
 
-### Vista - index.html
-- Comenzamos por agregar una nueva columna en la tabla para pdoer eliminar un registro
-- `<a th:href="@{/eliminar/} + ${persona.persona_id}">Eliminar</a>`
-  - `@{/eliminar/}` es el path de nuestro controlador
-  - `+ ${persona.persona_id}` es el `pathVariable` que señala que `Persona` vamos a eliminar
-- Por lo tanto al controlador le debe llegar por ejemplo un `/eliminar/1`
-- Podemos observar que el nuevo campo editar ya se encuentra en la tabla
-
-
-
-### Controlador - /eliminar/{personaId}
-- Agregamos una operacion de tipo GET similar a la de editar `/eliminar/{personaId}`
-- Pasamos un objeto de tipo `Persona` como atributo
-- Llamamos  a nuestro servicio con su metodo `eliminarPersona`
-- Dinalmente hacemos un redirect a `/`
-- Vamos a eliinar el ultimo registro de nuestra tabla: 
-
-![img.png](img.png)
-
-- Confirmamos en consola que se hay realizado un delete
-
-![img_1.png](img_1.png)
-
-- Y finalmente observamos nuestra tabla actualizada
-
-![img_2.png](img_2.png)
-
-### Delete con queryParam - Vista
-- Anteriormente utilizamos `pathVariables` para pasar el id de la persona desde el FE con `/eliminar/{personaId}`
-- A continuacion la diferencia en sintaxis:
-  - `pathVarioable`: `th:href="@{/eliminar/} + ${persona.personaId}"`
-    - URL: `/eliminar/1`
-  - `queryParam`: `th:href="@{/eliminar(${persona.personaId})}"`
-    - URL: `/eliminar?personaId=1`
-
-### Delete con queryParam - Controlador
-- Del lado del controlador, a la hora de cambiar a `queryParam`, solo hay que eliminar el `pathVariable` del endpoint
-- Pasando de esto: `/eliminar/{personaId}` a esto: `/eliminar`
-- Spring en automatico setea el id recibido como parametro en el objeto compartido
-- Podemos observar como funciona la eliminacion del ultimo registro
+### Modelo - Persona
+- Las validaciones de Spring se pueden llevar a cabo mediante anotacion a nivel de campo
+- En caso de requerir la librria de:
+  - `<dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-validation</artifactId></dependency>`
+- Para `Strings`, `@NotEmpty` permite validar que un campo no venga vacio ni sea nulo
+- Para el campo emial, podemos usar `@Email` que tambien valdia la estructura de la cadena
 
 ![img_3.png](img_3.png)
 
-- Se ejecuta el delte 
+### Vista - modificat.html
+- En el formulario, es necesario agregar la informacion en caso de que haya un error de validacion
+- Para validar agregamos `th:if="${#fields.hasErrors('nombre')}"`:
+  - `th:if`: componente de thymeleaf para hacer validaciones
+  - `#fields`: wildcard para referenciar los campos
+  - `.hasErrors('nombre')`: funcion que valida si hay errores sobre algun campo
+- Para desplegar mensaje de error usamos `th:errors="*{nombre}"`
+  - componente de thymeleaf para acceder a los errores de un campo en particular
 
-![img_4.png](img_4.png)
+### Controlador - /guardar
+- En el controlador, en el path de guardar, debemos esdpecificar que el modelo persona se debe validar
+- Para ello debemos agregar `@Valid` antes del objeto persona que se pasa como argumento
+- Tambien se debe pasar como argumento el objeto `Errors` para saber si se ha recibio algun error del formulario
+- Finalmente debemos validar la existencia de errores y retornar la vista de `modificar` en caso de que los haya 
 
-- Se elimina de la lista 
+![img.png](img.png)
 
-![img_5.png](img_5.png)
+- En caso de haber un error en un campo, se desplegara el erro en el formulario
+
+![img_1.png](img_1.png)
+
+- Solo hasta llenar la informacion nos permitira guardar
+- El telefono no es requerido, por lo que no validara el contenido de ese campo
+
+![img_2.png](img_2.png)
+
+
 
