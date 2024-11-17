@@ -1,40 +1,60 @@
-# Seccion 7
-## Validacion con Spring
+# Seccion 8
+## Plantillas Thymelead
 
-### Modelo - Persona
-- Las validaciones de Spring se pueden llevar a cabo mediante anotacion a nivel de campo
-- En caso de requerir la librria de:
-  - `<dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-validation</artifactId></dependency>`
-- Para `Strings`, `@NotEmpty` permite validar que un campo no venga vacio ni sea nulo
-- Para el campo emial, podemos usar `@Email` que tambien valdia la estructura de la cadena
+### Objetivo
+- Las plantillas de Thymeleaf nos evita tener que estar repitiendo codigo en cada una de las vistas
+  - Por ejemplo, si agregamos un `footer`, el tener que codificarlo en `index.html` y en `modificar.html`
 
-![img_3.png](img_3.png)
+### Plantillas
+- Sobre la carpeta de `templates`, agregaremos una nueva llamada `layout`
+- Luego crearemos un nuevo archivo html llamado `plantilla`
+- Configuramos la plantilla con el namespace:
+  - Thymeleaf: `xmlns:th="http://www.thymeleaf.org"`
+  - W3: `xmlns="http://www.w3.org/1999/xhtml"`
+    - Este nos permitira evitar los errores que aparecen en el archivo html
+- Como esta plantilla se va a reutilizar en index y en modificar, vamos a divirila en varias secciones
 
-### Vista - modificat.html
-- En el formulario, es necesario agregar la informacion en caso de que haya un error de validacion
-- Para validar agregamos `th:if="${#fields.hasErrors('nombre')}"`:
-  - `th:if`: componente de thymeleaf para hacer validaciones
-  - `#fields`: wildcard para referenciar los campos
-  - `.hasErrors('nombre')`: funcion que valida si hay errores sobre algun campo
-- Para desplegar mensaje de error usamos `th:errors="*{nombre}"`
-  - componente de thymeleaf para acceder a los errores de un campo en particular
-
-### Controlador - /guardar
-- En el controlador, en el path de guardar, debemos esdpecificar que el modelo persona se debe validar
-- Para ello debemos agregar `@Valid` antes del objeto persona que se pasa como argumento
-- Tambien se debe pasar como argumento el objeto `Errors` para saber si se ha recibio algun error del formulario
-- Finalmente debemos validar la existencia de errores y retornar la vista de `modificar` en caso de que los haya 
+### Configuracion - header
+- Para configurar un header como reutilizable para otras paginas debemos de hacer lo siguiente
+- Dentro del componente a reutilizar, agregamos `th:fragment="headerPerron"`. entre comillas el nombre
+- Ahora ya podemos comenzar a construir ese compoennte con lo que deseemos
 
 ![img.png](img.png)
 
-- En caso de haber un error en un campo, se desplegara el erro en el formulario
+### Reutilizacion - index.html
+- Ahora solo debemos referenciar el fragmento que hemos creadod e la siguiente forma: `<header th:replace="layout/plantilla :: headerPerron"></header>`
+  - `header` es el componente que definimos en la plantilla
+  - `th:replace` componente de thyme leaf para referenciar el fragmento
+  - `layout/plantilla` la ruta de la plantilla que contiene el fragmento
+  - `:: headerPerron` el nombre del fragmento que queremos reutilizar
 
 ![img_1.png](img_1.png)
 
-- Solo hasta llenar la informacion nos permitira guardar
-- El telefono no es requerido, por lo que no validara el contenido de ese campo
+- Con esto podemos observar que el ehader  de la plantilla ya aparece en amabas vistas
 
 ![img_2.png](img_2.png)
+
+![img_3.png](img_3.png)
+
+### Plantilla - footer
+- Podemos definir un footer dentro del mismo layout `plantilla` siempre y cuando lo configuremos de la misma forma, como un fragmento
+
+![img_4.png](img_4.png)
+
+![img_5.png](img_5.png)
+
+- Con esto podemos observar el nuevo fragmento de la plantilla en ambas paginas
+
+![img_6.png](img_6.png)
+
+![img_7.png](img_7.png)
+
+### Conlusion
+- Se pueden crear diferentes plantillas con diferentes fragmentos cada uno
+- Cada plantilla puede tener mas de un fragmento reutilziable
+- Los fragmentos se peuden llamar por separado en diferentes vistas para no tener que repetir codigo HTML
+
+
 
 
 

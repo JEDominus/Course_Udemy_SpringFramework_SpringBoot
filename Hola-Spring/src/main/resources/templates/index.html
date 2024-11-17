@@ -5,7 +5,7 @@
     <title>Home</title>
 </head>
 <body>
-<h1>Inicio</h1>
+<header th:replace="layout/plantilla :: headerPerron"></header>
 <a th:href="@{/agregar}">Agregar Persona</a>
     <table border="1">
         <tr>
@@ -25,5 +25,9 @@
             <td><a th:href="@{/eliminar/} + ${persona.personaId}">Eliminar</a></td>
         </tr>
     </table>
+<br>
+<br>
+<br>
+<footer th:replace="layout/plantilla :: footerAunMasPerron"></footer>
 </body>
 </html>
