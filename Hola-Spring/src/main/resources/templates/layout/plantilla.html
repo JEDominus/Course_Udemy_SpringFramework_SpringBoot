@@ -8,11 +8,11 @@
 </head>
 <body>
     <header th:fragment="headerPerron">
-        <h1>Control de Clientes</h1>
+        <h1 th:text="#{plantilla.titulo}"></h1>
     </header>
 
     <footer th:fragment="footerAunMasPerron">
-        <p>Todos los derechos reservados</p>
+        <p>[[#{plantilla.pie-pagina}]] - Javier Mota</p>
     </footer>
 </body>
 </html>
