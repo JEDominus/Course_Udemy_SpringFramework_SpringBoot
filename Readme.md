@@ -1,53 +1,60 @@
 # Seccion 9
-## Manejo de mensajes con Spring
+## Internacionalizacion
 
-### Objetivo
-- Permite almacenar cadenas de texto en un archgivo de propiedades para que las vistas puedan leerlas sin tener que contener los valores en los archivos html
-- mas delante, esto nos permitira manejar diferentes idiomas de esas cadenas y cambiar el idioma de todo el sitio facilmente
+### Configuracion
+- Lo primero es configurar el listener que trae spring
+- Para ello vamos a crear una clase llamada `WebConfig` en el paquete `web` y la anotamos con `@Config`
+  - Esta ultima para que Spring `ComponentScan` lo detecte y lo agregue al contenedor
+- Esta clase debe imnplementar `WebMvcConfigurer`, la cual trae varios metodos por default, por ejemplo, `addInterceptors()`
+  - Necesitamos este interceptor para la configuracion de la internacionalizacion
 
-### Estructura
-- Este archivo de propiedad se encuentra al mismo nivel que el applciation.properties
-- Creamos un nuevo archivo de propiedades llamado `messages.properties`
-- Ahora solo debemos agregar todos los textos que tenemos en nuestra vista dentro de ese archivo, tales como:
-  - `Nombre`, `Apelli`, `Control de Clientes`, `Todos los derechos reservados`, etc
-- Estos mensajes se definen como propiedad con la notacion del punto, por ejemplo:
+### WebConfig - LocaleResolver
+- `@Bean` permite definir un metodo para crear una instancia de un objeto
+  - La anotacion tambien aydua a agregar ese objeto al contenedor de spring
+- Creamos un metodo que retorne un `LocaleResolver`, se encargara de resolver el idioma local
+  - instanciamos un objeto de tipo `SessionLocaleResolver` de la liobreria `i18n`
+    - `i18n` se refiere a que hay 18 cracteres entre la `i` y la `n` de `internationalization`,
+- Despues usando `slr.setDefaultLocale(new Locale("es"));` establecemos el idioma por default
+- Finalmente retornamos el objeto para que se agregue al contexto
+
+### WebConfig - Creacion Interceptor
+- Creamos otro brean de tipo `LocaleChangeInetrceptor`
+- Este nos permitira cambiar el lenguaje de forma dinamica
+- Para estoy hay que definir el parametro que nos permitira cambiar de lenguaje
+  - Mediante `lci.setParamName("lang");` ya podemos referenciar `lang` en las URLs y cambiar su lenguaje con eso
+
+### Prefijos de lenguaje de internacionalizacion
+- `en` - English
+- `de` - German
+- `fr` - French
+- `ru` - Russian
+- `ja` - Japanese
+- `zh` - Chinese
+- `ar` - Arabic
+
+### WebConfig - Sobreescritura de Interceptor
+- Finalmente se debe de sobreescribir el interceptor de spring con el nuevo que hemos creado
+- Para ello, crearemos un nuevo metodo `void` que reciba un `InterceptorRegistry` (registro de interceptor)
+- Mediante el metodo `addInterceptor()` mandamos llamar el metodo bean que acabamos de crear
+  - `registry.addInterceptor(localeChangeInterceptor());`
+- Hasta aqui termina la configuracion
+
+### Nuevos idiomas
+- Para tener mas idiomas necesitamos registrar otros archivos de propiedades
+- Vamos a duplicar el archivo `messages.properties` agregando al final `_en` y `_es`
+  - Esto eprmitira definir que un archivo manej mensajes en español y otro en ingles
+- Ahora solo falta modificar los valores de las etiquetas del archivo en ingles `messages_en.properties`
+
+### Configuracion en la vista
+- En el componente del footer, vamos a agregar 2 links para cambiar de idioma dinamicamente
+- Este nos regresara al home pero en el nuevo idioma
 
 ![img.png](img.png)
 
-### Referencia en vistas
-- Dentro del componente `th:test` solo hay que referenciar con `"#{plantilla.titulo}"`
-- Esto en automatico ira al archivo de propiedades y leera el valor del texto
+- Ahora ya podemos cambiar entre lenguajes
 
 ![img_1.png](img_1.png)
 
-- Existe una sintaxys alternativa para fragmentos de texto cuando no se requiera conbinar con otro texto
-- Por ejemplo, en el pie de pagina, si quiero conservar el nombre pero agregar el texto del archivo de propiedades, se utiliza la anotacion de doble corchete:
-  - `[[#{plantilla.pie-pagina}]]`
-
 ![img_2.png](img_2.png)
 
-- Con esto podemos observar que ya se encuentran los mensajes del archivo en la plantilla
-- Y dado que la plantilla esta en diferentes vistas, el texto se ha actualizado en todas ellas
-
-![img_3.png](img_3.png)
-
-- En casod e que alguna propiedad este mal referenciada o no exista, se desplegara de esta forma: 
-
-![img_4.png](img_4.png)
-
-### Validaciones
-- Tambien se pueden eprsonalizar los mensajes de las validaciones del formulario
-
-![img_5.png](img_5.png)
-
-- Ahora nuestros mensajes de validacion se muestran de la siguiente manera
-
-![img_6.png](img_6.png)
-
-- Curiosamente no se requierio definir el mensaje para la validacion de `email invalido` en la vitsa `modificar.html`
-
-![img_7.png](img_7.png)
-
-- Solo basto con definirlo en el archivo de mensajes y en automatico lo detecto para ese error
-- Esto se debe a que como hemos definido el nombre con el mismo de la anotacion `NotEmpty` o `Email` en automatico lo toma como su valor de validacion
-
+- Agregando ams archivos de propiedades, podemos agregar mas idiomas
