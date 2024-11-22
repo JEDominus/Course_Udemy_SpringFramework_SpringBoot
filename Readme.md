@@ -1,157 +1,145 @@
-# Seccion 10
-## Spring Security
+# Seccion 11
+## Spring Security con JPA y Hibernate
 
-### Libreria Spring Security
-- El paso numero 1 para implementar spring security es agregar la libreria al `pom.xml`
-- Para ello en el pom seleccionamos la opcion add Starters y buscamos spring security
+### MySQL Workbench - Nuevas tablas
+- Agregaremos las tablas de `Usuarios` y `Roles` para recuperar esta informaciond e la base de datos
+- Esto permitira eliminar el codigo duro de los usuarios del proyecto
+- Creamos las tablas con las siguientes especificaciones:
+- `Usuario`
 
 ![img.png](img.png)
 
-### Spring Security Default Login
-- Una vez hecho esto, podremos observar que al levantar la aplicacion, en automatico ya nos genera un user `user` y una constraseña para pdoer ingresar
+- Debido a que el password viene encriptado, el campo debera ser un `VARCHAR` mas extenso
+
+- `Rol`
 
 ![img_1.png](img_1.png)
 
-- Este es el login por default de spring security
+- Esta tabla debe contener la llave foranea de la tabla de usuario `id_user`
+- Esto se configura en la pestaña de `foreign key` despues de agregarla como columna
+- De damos un nombre a la llave foranea y seleccionamos la tabla con la que se relaciona
+- Del otro lado seleccionamos el campo con el que tien relacion, en ese caso `id_user` y aplicamos cambios
 
 ![img_2.png](img_2.png)
 
-- Ahora solo falta configurar los accesos para los usuarios
-
-### SecurityConfig - Personalizar usuarios de Login
-- Sobre el paquete `web` comenzaremos creando una nueva clase llamada `SecurityConfig`
-- Dado que es una clase de configuracion de spring, la anotaremos con `Configuration` y `@EnableWebSecurity`
-- `SecurityFilterChain` configura las reglas de seguridad
-  - Esta configuracion dice que todas las paginas requieren autenticacion
-  - Tambien permite el aceso a la pagina de login
-- `UserDetailsService` define usuarios en memoria con contraseñas codificadas 
-  - Utiliza `passwordEcoder`
-  - Estos usuarios se guardan en memoria, pero ams delante se leeran de una base de datos
-- Una vez hehco esto, ya no se generara un password al levantar la app dado que ya definimos usuarios
-- Asi mismo, tambien generara un mensaje de error si las credenciales son erroneas 
+- Por ultimo agregamos nuevos usuarios y roles similar a lo actualmente configurado en el proyecto
+- El usuario 1 tendra los roles de `ROLE_ADMIN`  y `ROLE_USER`, por lo que se configuran 2 registros en la tabla `rol`
 
 ![img_3.png](img_3.png)
-
-- Ahora podemos logearnos con als credenciales que hemos deifnido el la clase de `SecurityConfig`
-
-### Logout
-- Ahora necesitamos configurar un logout para que spring detecte que queremos salir de la aplicacion
-- Para esto vamos al `footer` previamente diseñado y agregamos lo siguiente:
-
-![img_6.png](img_6.png)
-
-- `th:action="@{/logout}"` es el path que spring utiliza para detectar el logout
-- Se ha puesto dentro de un boton para que ejecute la accion `submit`
-- Ahora podemos nuestro boton desplegado correctamente
-
 ![img_4.png](img_4.png)
 
-- Si lo presionamos, la app de spring nos deslogea y nos informa del status
+### Encriptacion de password
+- Lo primero es crear una clase de utileria para generar los passwords que usaremos en la BD
+- Creamos una nueva clase `EncriptarPassword` en el paquete denuvo `.utils`
+- El algoritmo a utilizar es `BCryptPassword`, entonces creamos una instancia de `BCryptPasswordEncoder` dentro de nuestra clase de utileria
+  - Esta es una clase de spring, por lo que hay que importarla de la libreria de spring
+- Despues creamos un password cualquiera `123`
+- Ahora necesitamos un metodo llamado `encriptarPassword`
+  - Recibe la cadena, usa el encoder con su metodo `encode` y retorna el password encriptado
+- Asi luce la clase de utileria para la encriptacion
 
 ![img_5.png](img_5.png)
 
-### Bloqueo de URLs segun el ROLE (admin/user)
-- Se han agregador request matchers en `securityConf` para bloquear las urls dependiendo el usuario
-- Usar `/eliminar/**` indica que cualquier otro path bajo este mismo (como `/eliminar/132`) tambien estara restringido
-- Se va a restringir los paths de editar, eliminar y agregar solo para usuarios de tipo `ADMIN`
-  - `Autenticacion`: Agregar usuarios
-    - El usuario presenta sus credenciales
-  - `Autorizacion`: restriccion de urls
-    - Permitir a un usuario visualizar o ejecutar acciones
+- Asi luce el password encriptado
+
+![img_6.png](img_6.png)
+
+- Una vez encriptado el password, se puede modificar manualmente en la base de datos
 
 ![img_7.png](img_7.png)
 
-### WebConfig - AddViewControllers
-- Ahora no podremos acceder a la ruta `"/"` dado que esta restringida por el tipo de usuario
-- Para esto tendremos que sobreescribir el metodo `addViewController` en la clase `WebConfig`
-- Usando `ViewControllerRegistry`, vamos a agregar nuestro path raiz y le daremos el nombre de `index`
+### Mapeo de nuevas tablas Usuario y Rol
+- Debemos crear las clases de entidad para `usuario` y `rol` dentro del paquete de `entity` de forma similar coo lo hicimos con las clase `persona`
+- En las clase `Rol` no es necesario mapear la llave foranea `idUsuario` ya que en este lado de la relacion no es necesario agregarla
+- Por el contrario, la clase de usuario debe mapear el campo con el que se relaciona con la tabla rol
+  - Se utiliza `@OneToMany` para definir que es una relacion de uno a mucho, un usuario puede tener muchos roles
+  - Se utiliza `@JoinColumn(name="id_usuario")` indica cual es la columna que hace la relacion entre las tablas
+- Dado que pueden ser mucho roles, definimos una lista de objetos de tipo `Rol`
 
 ![img_11.png](img_11.png)
 
-### Login personalizado
-- De momento se ha configurado la pagina raiz en el `SecurityConfig` pero necesitamos agregar una pagina de login personalizada para que en caso de querer acced a `"/"`, spring security nos redireccione al login si no lo hemos hecho
-- Para esto creamos una nueva pagina sobre templates llamada `login`
-  - Agregamos los namespaces que ya hemos manejado antes
-- Debemos agregar un formulario similar al del logout para setear que valores queremos enviar para el login
-  - `method="POST"`
-  - `th:action="@{/login}"` para que spring security reconozca este path
-- `label` e `input` deben contener `for` y `name` con `username` respetando la sintaxis ya que es lo que espera Spring security
-- Mismo caso para el `input` y `label` de `password`
-- Finalmente, debemos de hacer el mapeo del login en el `addViewControllers` ya que no agregaremos uno en el controlador normal
-  - `AddViewController`: Mapear paths que no pasan por el controlador java
-- Agregamos el mapeo en el registry:
+- Con esto ya tenemos roda la informacion que requerimos para trabajar con nuestra clase `Usuario` y `Rol`
 
-![img_12.png](img_12.png)
-
-- Y lo agregamos en el SecurityConfig: 
-
-![img_8.png](img_8.png)
-
-- Con esto ya podemos observar nuestro login personalizado
-
-![img_13.png](img_13.png)
-
-- Esto ya nos permite hacer login como admin y ver todas las opciones disponibles para ese rol
-
-![img_14.png](img_14.png)
-
-- Pero si logeamos con un usuario que no es admin e intentamos crear un usuario, no marca un `403 Forbidden` debido al rol del usuario
-
-![img_15.png](img_15.png)
-
-### Error 403 personalizado
-- Dentro de templates crearemos una carpeta llamada `errores` y ahi un archivo html `403.html`
-- Configuramos cabeceros como en los demas archivos html
-- Agregamos un par de mensajes sobre acceso denegado y la opcion de regresar
-- Hacemos el mapeo de la ruta en el `addViewController`: 
-  - `registry.addViewController("/errores/403").setViewName("errores/403");`
-- Agregamos la pagina al security config
+### Spring Security con JPA - UsuarioRepository y UsuarioService
+- Debemos crear las clases `repository` para `Usuario` y `Rol`
+- Comenzando con la de `Usuario`, en esta ocasion se extendera de `JapRespoitory...` en lugar de `CrudRepository` dado que contiene algunas mejoras
+- Tambien debemos definir un metodo personalizado `finByUsername(string username)`
+  - Este tipo de tipado permite hacer queries sin usar el modo nativo
+    - `findByUsername` = `SELECT * FROM usuario WHERE nombre = username` 
+  - Spring va a recuperar un objeto de tipo usuario filtrado por el `username`
 
 ![img_10.png](img_10.png)
 
-- Una vez hecho esto, ya podemos observar nuestra pagina 403 personalizada
+- Ahora debemos crear su respectiva clase de servicio `UsuarioService` sobre el paquete de `servicio`
+- Debemos anotar este servicio y renombrar el bean `@Service("userDetailsService")`
+  - Spring en automatico va a buscar un bean con este nombre, por eso es importante no cambiarlo
+- Agregamos el manejo de logeo con `@Slfj4`
+- Esta clase debe implementar `UserDetailsService` para que pueda funcionar la seguridad de spring cuando trabajamos con esta implementacion de JPA
+- Esta interface tiene el metodo `loadUserByUsername` que obtiene un usuario filtrado por su username
+  - la implementacion de este metodo se apoyara del repositorio para buscar el usuario en la BD
+  - Por lo que debemos de agregarlo como atributo de clase
+- Para comenzar recuperaremos el objeto de usuario del repositorio con el argumento pasado al metodo
+- Despues hacemos una validacion del registro por si es que no lo encontramos
+  - De no encontrarlo, arrojamos una exception con el nombre de usuario que no se encontro
+- Mas delante, recuperamos los roles desde nuestro objeto usuario
+  - No podemos utilizar nuestra clase de rol directamente
+  - Spring utiliza el tipo `GrantedAuthority` para manejar los roles, asi que debemos envolver nuestros roles en este tipo de dato
+- Despues debemos de iterar `usuario.roles` y los envolvemos en un nuevo objetod e tipo `SimpleGrantedAuthority`
+  - `SimplegrantedAuthority` es el objeto que implementa `GrantedAuthority`
+- Finalmente debemos retornar el objeto del metodo con todos los valores que ya hemos recuperado
+  - `User` es una clase de spring security que implementa `UserDetails` asi que podemos suarla en el return
+  - Este user tiene los siguientes campos:
+    - `username`: Lo obtenemos desde el repositorio
+    - `password`: Tambien viene de la llamada del repositorio
+    - `collection<GrantedAuthority>`: Iteramos nuestros roles y lo alacenamos en una lista
+
+![img_12.png](img_12.png)
+
+- Esto es todo lo que necesitamos para que Spring security carge la informacion de un usuario
+
+### SecurityConfig
+- Anteriormente definimos los usuarios en memoria en la clase de `SecurityConfig`
+- Ahora modificaremos la implementacion para que los carge usando JPA
+- Comenzaremos inyectando el `UsuarioService` que trabajamos previamente
+  - Al igual que con el `PersonaService`, inyectamos la interfaz en lugar de la clase de implementacion, por lo que inyectaremos `UserDetailsService` que es la interfaz que spring utiliza para la recuperacion de usuarios
+- Despue definiremos el tipo de encipcion que vamos a utilizar
+  - Anteriormente utilizamos `BCryptPasswordEncoder` para encriptar los passwords
+  - Asi lo que agregaremos como un bean para que spring pueda usarlo para desencriptar 
+    - Anotamos el metodo con `@Bean` para que spring lo agregue al contenedor y pueda ser utilizado 
+
+![img_13.png](img_13.png)
+
+- Ahora necesitamos un nuevo metodo para definir que haremos uso del `passwordEnconder` y de nuestra clase `userDetailsService`
+- A este metodo se le pasara un argumento de forma automatica mediante spring
+- Al anotar el metodo con `@Autowired` spring va a buscar automaticamente una implementacion de `AuthenthicationManagerBuilder`
+  - Al trabajar con Spring security, `AuthenthicationManagerBuilder` es un objeto que ya se encuentra en la fabrica de spring
+  - Ahora sobreescribimos en el objeto `build` el `UserDetailsService` y el `passwordEncoder` con los que nosotros definimos
+
+![img_14.png](img_14.png)
+
+- Ahora nos pdoemos deshacer de nuestra vieja implementacion donde creabamos los usuarios hardcodeados
+
+![img_15.png](img_15.png)
+
+### Resolucion de errores
+- `Error creating bean with name 'securityConfig': Requested bean is currently in creation`
+  - basta con eliminar la anotacion `@Bean` del `passwordEncoder` en `SecurityConfig`
+- Si hibernate tiene problemas con la identificacion de nombre de columna:
+  - Asegurese de que el nombre de la columna corresponda al nombre de la entidad en java
+- `failed to lazily initialize a collection of role: com.courses.je.model.entity.Usuario.roles: could not initialize proxy - no Session`
+  - Si siempre necesitas la colección, puedes configurarla como FetchType.EAGER en la relación ` @OneToMany(fetch = FetchType.EAGER)`
+  - Otra solucion es agregar `@Transactional` a `loadUserByUsername` en `UsuarioService`
+
+### Aplicacion
+- Una vez configurado el proyecto y los errores resueltos, podemos acceder a nuestra aplicaicon como anteriormente lo haciamos solo que ahora las credenciales no estan almacenadas en memoria si no en una base de datos
+- Login
 
 ![img_16.png](img_16.png)
 
-- Mas delante, se restringira la visualizacion de las opciones segun el rol.
-- Esto permitira desplegar o no acciones permitidas segun el rol, por lo que el usuario de tipo `user` ya no podra ver las opcines de `agregar`, `editar` y `eliminar`
-
-### Recuperar el usuario logeado en el controlador Java
-- `@AuthenthicationPrincipal User user` como argumento en el path `"/"` del controlador java, permitira acceder al usuario que acaba de hacer login
-- De ommento solo mandaremos a consola el usuario que hizo login para fines demostrativos
+- Pantalla de `admin` con todas las opciones disponibles 
 
 ![img_17.png](img_17.png)
 
-### Logout configuration
-- Como se ha hecho anteriormente, hay que definir en `SecurityConfig` el path para el logout
-- Deifnimos la URL de logout y a donde redirige si el logout es success
-
-![img_9.png](img_9.png)
-
-### Seguridad con Thymeleaf - Libreria
-- Para agregar seguridad en thymeleaf, hay que agregar una libreria mas en el `pom.xml`
+- Panatlla de `user` con las opciones restringidas
 
 ![img_18.png](img_18.png)
-
-### Seguridad con Thymeleaf - Plantillas
-- Comenzamos agregando el namespace: `xmlns:sec="http://www.thymeleaf.org/extras/spring-security"`
-- Ahora, agregaremos a la plantilla el usuario que hizo login y los roles que tiene ese usuario
-- Para ello iremos al footer y agregaremos lo siguiente en el formulario de la plantilla
-
-![img_19.png](img_19.png)
-
-- Con `sec:authenthication` podemos acceder al nombre de usuario y sus roles, mejor conocidos como `principals`
-- Ahora ya podemos visualizar la informacion del usuario en la pantalla
-
-![img_20.png](img_20.png)
-
-### Thymeleaf Security - oculatr opciones restringidas
-- Sobre nuestra pagina de index, agregamos el mismo namespace
-- `sec:authorize="hasRole('ROLE_ADMIN')"` sobre cada link que ejecuta las acciones que queremos restringir y ya no se deben mostrar para usuarios de tipo `ROLE_USER`
-- Ahora pdoemos observar como no se tiene acceso a las opciones para un usuario que no es admin
-
-![img_21.png](img_21.png)
-
-### Highlights
-- Cons spring security, es necesario agregar al `addViewController` las rutas que no pasan por un controlador java
-- `SecurityConfig` debe tener configurados los paths de `login`, `logout` y `errores`
