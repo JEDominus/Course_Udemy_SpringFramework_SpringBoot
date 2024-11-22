@@ -5,6 +5,8 @@ import com.courses.je.service.PersonaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -22,7 +24,8 @@ public class HomeController {
     private final PersonaService personaService;
 
     @GetMapping("/")
-    public String home(Model model) {
+    public String home(Model model, @AuthenticationPrincipal User user) {
+        log.info("Usuario logeado: " + user);
         List<Persona> personas = personaService.listarPersonas();
         model.addAttribute("personas", personas);
         return "index";

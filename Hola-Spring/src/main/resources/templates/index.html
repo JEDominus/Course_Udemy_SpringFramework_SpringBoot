@@ -1,28 +1,29 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+        xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
 </head>
 <body>
 <header th:replace="layout/plantilla :: headerPerron"></header>
-<a th:href="@{/agregar}" th:text="#{operacion.persona.crear}"></a>
+<a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/agregar}" th:text="#{operacion.persona.crear}"></a>
     <table border="1">
         <tr>
             <th th:text="#{texto.nombre}"></th>
             <th th:text="#{texto.apellido}"></th>
             <th th:text="#{texto.telefono}"></th>
             <th th:text="#{texto.email}"></th>
-            <th th:text="#{operacion.persona.editar}"></th>
-            <th th:text="#{operacion.persona.eliminar}"></th>
+            <th sec:authorize="hasRole('ROLE_ADMIN')" th:text="#{operacion.persona.editar}"></th>
+            <th sec:authorize="hasRole('ROLE_ADMIN')" th:text="#{operacion.persona.eliminar}"></th>
         </tr>
         <tr th:each="persona : ${personas}">
             <td th:text="${persona.nombre}"></td>
             <td th:text="${persona.apellido}"></td>
             <td th:text="${persona.telefono}"></td>
             <td th:text="${persona.email}"></td>
-            <td><a th:href="@{/editar/} + ${persona.personaId}" th:text="#{operacion.persona.editar}"></a></td>
-            <td><a th:href="@{/eliminar/} + ${persona.personaId}" th:text="#{operacion.persona.eliminar}"></a></td>
+            <td sec:authorize="hasRole('ROLE_ADMIN')"><a th:href="@{/editar/} + ${persona.personaId}" th:text="#{operacion.persona.editar}"></a></td>
+            <td sec:authorize="hasRole('ROLE_ADMIN')"><a th:href="@{/eliminar/} + ${persona.personaId}" th:text="#{operacion.persona.eliminar}"></a></td>
         </tr>
     </table>
 <br>
