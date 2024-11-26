@@ -1,9 +1,12 @@
 # Universidad Spring
 ## Spring Framework & Springboot
 
-This repository y managed by branches and PR where every branch contains the lesson lernings an practices and the PR the differences between 2 lesson, pointing to new content between each one.
+Este repositorio se encuentra gestionado por ramas que contienen notas, cambios e ilustraciones de lo visto en cada una de las lecciones.
 
-Lessons notes will be palced on this readme file in every branch.
+Las notas de cada leccion se pueden encontrar en el archivo `readme.md` en su respectiva rama.
+
+Encuentre mas abajo el certificado otorgado por Udemy al completar el curso.
 
 ## Udemy Completion Certificate
-(In Progress)...
+
+![UC-77d751e2-b011-48eb-a967-212922a9cde4.jpg](Hola-Spring/UC-77d751e2-b011-48eb-a967-212922a9cde4.jpg)
