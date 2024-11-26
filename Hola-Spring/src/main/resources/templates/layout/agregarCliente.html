@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Agregar Cliente</title>
+</head>
+<body>
+  <section th:fragment="agregarCliente">
+    <div id="agregarCliente" class="modal fade">
+      <div class="modal-dialog modal-md">
+        <div class="modal-content">
+          <div class="modal-header bg-info text-white">
+            <h5 class="modal-title" th:text="#{operacion.persona.crear}"></h5>
+            <button class="close" data-dismiss="modal"><span>&times;</span></button>
+          </div>
+          <form th:action="@{/guardar}" th:object="${persona}" method="POST" class="was-validated">
+            <div class="modal-body">
+              <div class="form-group">
+                <label for="nombre" th:text="#{texto.nombre}"></label>
+                <input type="text" name="nombre" class="form-control" required="true">
+              </div>
+              <div class="form-group">
+                <label for="apellido" th:text="#{texto.apellido}"></label>
+                <input type="text" name="apellido" class="form-control" required="true">
+              </div>
+              <div class="form-group">
+                <label for="email" th:text="#{texto.email}"></label>
+                <input type="email" name="email" class="form-control" required="true">
+              </div>
+              <div class="form-group">
+                <label for="telefono" th:text="#{texto.telefono}"></label>
+                <input type="text" name="telefono" class="form-control">
+              </div>
+              <div class="form-group">
+                <label for="saldo" th:text="#{texto.saldo}"></label>
+                <input type="number" name="saldo" class="form-control" required="true" step="any">
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-primary" type="submit" th:text="#{boton.guardar}"></button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</body>
+</html>

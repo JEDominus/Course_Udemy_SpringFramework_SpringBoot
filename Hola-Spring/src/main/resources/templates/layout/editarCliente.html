@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Cliente</title>
+</head>
+<body>
+
+    <section th:fragment="editarCliente">
+        <form th:action="@{/guardar}" th:object="${persona}" method="POST" class="was-validated">
+            <input type="hidden" name="idPersona" th:field="*{personaId}">
+            <section th:replace="layout/botonesEditar :: botonesEditar"></section>
+            <div id="details">
+                <div class="container">
+                    <div class="row">
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4>[[#{operacion.persona.editar}]]</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label for="nombre">[[#{texto.nombre}]]</label>
+                                        <input type="text" class="form-control" name="nombre" required="true" th:field="*{nombre}">
+                                        <label for="apellido">[[#{texto.apellido}]]</label>
+                                        <input type="text" class="form-control" name="apellido" required="true" th:field="*{apellido}">
+                                        <label for="email">[[#{texto.email}]]</label>
+                                        <input type="text" class="form-control" name="email" required="true" th:field="*{email}">
+                                        <label for="telefono">[[#{texto.telefono}]]</label>
+                                        <input type="text" class="form-control" name="telefono" th:field="*{telefono}">
+                                        <label for="saldo">[[#{texto.saldo}]]</label>
+                                        <input type="text" class="form-control" name="saldo" required="true" th:field="*{saldo}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </section>
+
+</body>
+</html>

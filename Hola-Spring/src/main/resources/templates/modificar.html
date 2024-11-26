@@ -1,31 +1,14 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
+<head th:replace="layout/plantilla :: heads">
     <meta charset="UTF-8">
     <title>Datos de la persona</title>
 </head>
 <body>
     <header th:replace="layout/plantilla :: headerPerron"></header>
-    <a th:href="@{/}" th:text="#{operacion.regresar}"></a>
-    <br>
-    <form th:action="@{/guardar}" method="POST" th:object="${persona}">
-        <input type="hidden" name="personaId" th:field="*{personaId}" /> <br>
-        <label for="nombre">[[#{texto.nombre}]]:</label>
-        <input type="text" name="nombre" th:field="*{nombre}" />*
-        <span th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}" th:text="#{NotEmpty.persona.nombre}"></span><br>
-        <label for="apellido">[[#{texto.apellido}]]:</label>
-        <input type="text" name="apellido" th:field="*{apellido}" />*
-        <span th:if="${#fields.hasErrors('apellido')}" th:errors="*{apellido}" th:text="#{NotEmpty.persona.apellido}"></span><br>
-        <label for="email">[[#{texto.email}]]:</label>
-        <input type="text" name="email" th:field="*{email}" />*
-        <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" th:text="#{NotEmpty.persona.email}"></span><br>
-        <label for="telefono">[[#{texto.telefono}]]:</label>
-        <input type="tel" name="telefono" th:field="*{telefono}" /> <br>
-        <button type="submit" name="guardar" th:text="#{boton.guardar}"></button>
-    </form>
-    <br>
-    <br>
-    <br>
+
+    <section th:replace="layout/editarCliente :: editarCliente"></section>
+
     <footer th:replace="layout/plantilla :: footerAunMasPerron"></footer>
 </body>
 </html>

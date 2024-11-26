@@ -27,7 +27,15 @@ public class HomeController {
     public String home(Model model, @AuthenticationPrincipal User user) {
         log.info("Usuario logeado: " + user);
         List<Persona> personas = personaService.listarPersonas();
+        Double saldoTotal = 0.0;
+
+        for(Persona persona: personas) {
+            saldoTotal += persona.getSaldo();
+        }
+
         model.addAttribute("personas", personas);
+        model.addAttribute("saldoTotal", saldoTotal);
+        model.addAttribute("clientesTotal", personas.size());
         return "index";
     }
 

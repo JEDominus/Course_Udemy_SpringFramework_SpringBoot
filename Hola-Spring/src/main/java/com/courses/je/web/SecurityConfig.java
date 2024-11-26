@@ -31,6 +31,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         // Permitir acceso a login y recursos estaticos
                         .requestMatchers("/login", "/resources/**").permitAll()
+                        .requestMatchers("/webjars/**", "/css/**", "/js/**").permitAll()
                         // Restriccion de acceso por rol
                         .requestMatchers("/editar/**", "/agregar", "/eliminar/**").hasRole("ADMIN")
                         // Acceso a usuarios autenticados
